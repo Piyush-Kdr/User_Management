@@ -1,4 +1,5 @@
 const db = require('../models')
+const { Op } = require('sequelize');
 
 const User = db.User
 
@@ -74,11 +75,54 @@ const disableUser = async (req, res) => {
     res.status(200).send('User Deleted')
 }
 
+// FILTER USER
+
+const filter = async (req, res) => {
+    const { firstName, lastName, email, phone } = req.query;
+    let user = await User.findAll({
+        attributes: [
+            'firstName',
+            'lastName',
+            'email',
+            'phone',
+        ],
+        where: {
+            isActive: true,
+            [Op.or]: [
+                {
+                    firstName: {
+                        [Op.like]: `%${firstName}%`
+                    }
+                },
+                {
+                    lastName: {
+                        [Op.like]: `%${lastName}%`
+                    }
+                },
+                {
+                    email: {
+                        [Op.like]: `%${email}%`
+                    }
+                },
+                {
+                    phone: {
+                        [Op.like]: `%${phone}%`
+                    }
+                }
+            ]
+        },
+    });
+    res.status(200).send(user);
+};
+
+
+
 module.exports = {
     createUser,
     getAllUsers,
     getUniqueUser,
     updateUser,
     deleteUser,
-    disableUser
+    disableUser,
+    filter
 }

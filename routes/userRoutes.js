@@ -7,6 +7,8 @@ router.post('/', userController.createUser)
 
 router.get('/', userController.getAllUsers)
 
+router.get('/filter', userController.filter)
+
 router.get('/:id', userController.getUniqueUser)
 
 router.put('/:id', userController.updateUser)
